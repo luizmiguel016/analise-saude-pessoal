@@ -53,3 +53,6 @@ O **Sistema de Análise de Dados de Saúde Pessoal** possibilita que usuários r
 - `RegistroSaude` (id, data, passos, bpmMedio, horasSono, kcal, usuario)
 - `MetaSaude` (id, tipoMeta, valorAlvo, periodo, status, usuario)
 - `Alerta` (id, tipo, mensagem, severidade, dataHora, usuario, registroRelacionado)
+
+## 6) Diagrama de Classes
+<img width="3440" height="1759" alt="Untitled diagram-2025-10-09-013353" src="https://github.com/user-attachments/assets/51853e20-cc88-40e2-af6c-0bc34b162962" />
