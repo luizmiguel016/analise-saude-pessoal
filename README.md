@@ -62,4 +62,4 @@ O `ServicoDeAlerta` apenas "monta" essa árvore de objetos uma vez e, para cada 
 
 O diagrama abaixo reflete a arquitetura de POO descrita acima, demonstrando o uso de Herança (para `MetaSaude`) e o padrão Composite (para `INoDecisao`).
 
-<img width="[COLOQUE A LARGURA]" height="[COLOQUE A ALTURA]" alt="Novo Diagrama de Classes com Herança e Árvore de Decisão POO" src="[COLOQUE O LINK DA SUA NOVA IMAGEM AQUI]" />
+<img width="5821" height="1426" alt="Diagrama de Classes com Herança e Árvore de Decisão POO" src="https://github.com/user-attachments/assets/75fefa3b-450b-4e56-bc06-6a40353c7767" />
