@@ -1,0 +1,22 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.2">
+    <persistence-unit name="projetoSaudePU">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>domain.Usuario</class>
+        <class>domain.RegistroSaude</class>
+        <class>domain.MetaSaude</class>
+        <class>domain.MetaPassos</class>
+        <class>domain.MetaMediaSono</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/projeto_saude?useSSL=false" />
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="SUA_SENHA_AQUI" />
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect" />
+            <property name="hibernate.hbm2ddl.auto" value="update" /> <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+        </properties>
+    </persistence-unit>
+</persistence>
