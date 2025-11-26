@@ -7,6 +7,7 @@
         <class>domain.MetaSaude</class>
         <class>domain.MetaPassos</class>
         <class>domain.MetaMediaSono</class>
+        <class>domain.Alerta</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
