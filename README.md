@@ -1,65 +1,200 @@
-# Sistema de Análise de Dados de Saúde Pessoal
+# 📌 Sistema de Análise de Dados de Saúde Pessoal  
+**Java • POO • JPA (Hibernate) • MySQL • EDs Próprias (Fila + Lista Encadeada) • Árvore de Decisão POO**
 
-Java • POO • JPA • Estruturas de Dados (Lista Encadeada, Fila, Árvore de Decisão)
+---
 
-## 1) Visão Geral
-O **Sistema de Análise de Dados de Saúde Pessoal** possibilita que usuários registrem métricas diárias (passos, batimentos cardíacos, sono e alimentação), visualizem **gráficos de tendência**, definam e acompanhem **metas**, e recebam **alertas** quando valores saem de faixas normais. Os alertas são **exibidos no próprio sistema** (não enviados a dispositivos externos).
+## 1. Visão Geral
 
-- **Stack:** Java, JPA (Hibernate), MySQL 8, Maven (admin via phpMyAdmin)
-- **Paradigmas/Conceitos:** POO (Encapsulamento, Herança, Polimorfismo), Coleções + **Lista Encadeada** (registros por dia), **Fila** (alertas a processar), **Árvore de Decisão POO** (para classificação e alertas).
-- **Arquitetura:** camadas `dominio` (entidades), `repositorio` (DAO/JPA), `servico` (regras), `view` (UI, opcional), `estruturadados` (ED), `dominio.arvore` (estrutura da árvore).
+O **Sistema de Análise de Dados de Saúde Pessoal** permite que usuários:
 
-## 2) Tabela de Conteúdos
-(Seu índice permanece o mesmo...)
+- registrem métricas diárias de saúde (passos, batimentos, sono e calorias),
+- acompanhem metas personalizadas,
+- recebam alertas automáticos baseados em uma **Árvore de Decisão orientada a objetos**.
 
-## 3) Objetivos do Projeto
-- Aplicar **POO** de forma clara.
-- Persistir dados com **JPA**, modelando entidades e relacionamentos.
-- Utilizar **estruturas de dados próprias** (lista encadeada, fila) e uma **Árvore de Decisão POO** para regras de negócio.
-- Entregar um sistema executável com **README** completo e repositório no GitHub.
-- Aplicar corretamente conceitos de POO (encapsulamento, coesão e uso criterioso de interfaces/abstrações).
+O sistema demonstra conceitos avançados de POO:
 
-## 4) Requisitos
-### 4.1) Funcionais
-- Cadastrar **Usuário** e **Registros de Saúde** (passos, BPM, sono, alimentação/kcal) por dia.
-- Definir **Metas de Saúde** (ex.: passos/dia, horas de sono) e acompanhar progresso de forma polimórfica.
-- Gerar **gráficos de tendência** (ex.: BPM médio diário, passos/semana, sono/semana).
-- Utilizar uma **Árvore de Decisão** para classificar a situação do usuário e gerar **alertas**, colocando-os em **Fila** para processamento/apresentação.
+- Herança  
+- Polimorfismo  
+- Encapsulamento  
+- Composição  
+- Padrão **Composite**  
+- Estruturas de dados próprias implementadas manualmente
 
-### 4.2) Não Funcionais
-(Permanece o mesmo...)
+**Stack utilizada:**  
+`Java` • `JPA (Hibernate)` • `MySQL 8` • `Maven` • `phpMyAdmin`
 
-## 5) Domínio e Modelo de Dados
-**Entidades JPA** (pacote `domain`):
-- `Usuário` (id, nome, email, perfil/limiares de BPM, etc.)
-- `RegistroSaude` (id, data, passos, bpmMedio, horasSono, kcal, usuario)
-- `Alerta` (id, tipo, mensagem, severidade, dataHora, usuario, registroRelacionado)
+---
 
-### 5.1) Padrões de POO Aplicados
+## 2. Estrutura do Projeto
 
-Para ir além de um simples CRUD e aplicar os conceitos da disciplina, o domínio foi modelado usando dois padrões principais de POO:
+src/main/java/
+├── app/ → Classe Main (execução e testes)
+├── domain/ → Entidades e Regras do Domínio
+│ ├── arvore/ → Árvore de Decisão (Composite)
+│ ├── meta/ → Metas de Saúde (Herança)
+│ └── ... → Usuário, RegistroSaude, Alerta, etc.
+├── dao/ → Persistência JPA (DAOs)
+├── service/ → Regras de Negócio
+└── util/estruturadados/ → Estruturas de Dados próprias
 
-#### 1. Herança e Polimorfismo (para `MetaSaude`)
-Em vez de uma classe `MetaSaude` com um campo `tipoMeta` e múltiplos `if/else` no serviço, foi usada Herança:
+## 3. Objetivos do Projeto
 
-- **`MetaSaude` (Classe Abstrata):** Define o "esqueleto" de uma meta, com atributos comuns (id, periodo, status) e um método abstrato: `calcularStatus()`.
-- **`MetaPassos` (Herda de `MetaSaude`):** Implementa `calcularStatus()` com a lógica específica para contar passos.
-- **`MetaMediaSono` (Herda de `MetaSaude`):** Implementa `calcularStatus()` com a lógica específica para calcular médias de sono.
+- Aplicar POO de forma clara, correta e idiomática (encapsulamento, coesão, polimorfismo).
+- Implementar regras reais usando **Árvore de Decisão POO**, eliminando `if/else`.
+- Modelar entidades e persistência com **JPA/Hibernate**.
+- Criar e usar **estruturas de dados próprias** (Fila e Lista Encadeada).
+- Fornecer arquitetura limpa, organizada e modular.
+- Atender todos os requisitos da disciplina.
 
-**Persistência (JPA):** Este padrão é persistido usando a estratégia `@Inheritance(strategy = InheritanceType.SINGLE_TABLE)`, conforme estudado nos materiais de Mapeamento de Herança.
+---
 
-#### 2. Padrão Composite e Polimorfismo (para `ArvoreDeDecisao`)
-Em vez de um serviço com um bloco `if/else` aninhado para gerar alertas (uma "árvore de decisão" procedural), a própria **estrutura de dados** da árvore foi modelada com objetos, aplicando POO:
+## 4. Requisitos
 
-- **`INoDecisao` (Interface):** Define um "contrato" polimórfico com um único método: `Optional<Alerta> avaliar(Usuario, RegistroSaude)`.
-- **`NoDeDecisao` (Implementa `INoDecisao`):** Representa um "ramo" (branch) da árvore. Este objeto *possui* outros dois objetos `INoDecisao` (um "sim" e um "não") e uma "pergunta" (Predicate). Ele delega a chamada para um de seus filhos baseado na resposta da pergunta.
-- **`NoResultado` (Implementa `INoDecisao`):** Representa uma "folha" (leaf) da árvore. Contém o `Alerta` final a ser gerado se esse nó for alcançado.
-- **`NoResultadoVazio` (Implementa `INoDecisao`):** Uma folha que não faz nada (retorna `Optional.empty()`), permitindo que a árvore termine sem gerar um alerta.
+### 4.1 Requisitos Funcionais
 
-O `ServicoDeAlerta` apenas "monta" essa árvore de objetos uma vez e, para cada novo `RegistroSaude`, ele simplesmente chama `raizDaArvore.avaliar()`. O polimorfismo cuida de navegar pela árvore inteira de forma limpa e desacoplada.
+- Cadastrar usuários.
+- Registrar métricas diárias:
+  - Passos  
+  - BPM médio  
+  - Horas de sono  
+  - Calorias
+- Evitar registros duplicados no mesmo dia.
+- Definir e atualizar metas:
+  - Meta de passos  
+  - Meta de média de sono  
+- Atualização polimórfica das metas.
+- Gerar alertas automáticos pela árvore de decisão.
+- Armazenar alertas em uma **Fila**.
+- Consultar histórico e médias com **Lista Encadeada**.
+- Listar estatísticas por período.
 
-## 6) Diagrama de Classes
+### 4.2 Requisitos Não Funcionais
 
-O diagrama abaixo reflete a arquitetura de POO descrita acima, demonstrando o uso de Herança (para `MetaSaude`) e o padrão Composite (para `INoDecisao`).
+- Uso de JPA.
+- Java 8+.
+- Organização por camadas e pacotes.
+- Banco MySQL 8.
+- README completo.
+- Commits frequentes e organizados.
+
+---
+
+## 5. Domínio do Sistema
+
+### Entidades JPA
+
+- **Usuario**  
+  `id, nome, email, cpf, senha, bpmMaxAlerta, ...`
+
+- **RegistroSaude**  
+  `id, data, passos, bpmMedio, horasSono, kcal, usuario`
+
+- **MetaSaude (abstrata)**
+  - **MetaPassos**
+  - **MetaMediaSono**  
+  — com `@Inheritance(SINGLE_TABLE)`
+
+- **Alerta**  
+  `id, mensagem, severidade, dataHora, usuario, registroRelacionado`
+
+---
+
+## 6. Padrões de Projeto Aplicados (Essencial para Avaliação)
+
+### 1. Herança e Polimorfismo — *MetaSaude*
+
+Implementação:
+
+MetaSaude (abstract)
+├── MetaPassos
+└── MetaMediaSono
+
+Cada meta sobrescreve:
+verificarProgresso(List<RegistroSaude>)
+
+---
+
+### 2. Padrão Composite — Árvore de Decisão POO
+
+Estrutura:
+
+| Classe            | Papel                                 |
+|------------------|-----------------------------------------|
+| `INoDecisao`      | Interface raiz com `avaliar()`          |
+| `NoDeDecisao`     | Nó interno com condição + filhos        |
+| `NoResultado`     | Folha que cria um alerta                |
+| `NoResultadoVazio`| Folha neutra (sem alerta)               |
+
+Exemplo de árvore:
+
+Se BPM > limite → alerta crítico
+Senão se sono < 5h → alerta de sono
+Senão → nenhum alerta
+
+---
+
+## 7. Estruturas de Dados Próprias
+
+A atividade exige EDs implementadas manualmente.
+
+### ✔ Fila<T> (genérica)
+Usada para armazenar alertas novos.
+
+### ✔ ListaEncadeada
+Usada para armazenar e processar registros de saúde (ex.: média de passos).
+
+---
+
+## 8. Diagrama de Classes
+
+> ⚠ Inclua aqui a imagem do seu modelo UML.
+
+O diagrama deve exibir:
+
+- Entidades JPA  
+- Herança de MetaSaude  
+- Composite da árvore  
+- Relação entre serviços/DAOs  
+- ListaEncadeada + Fila  
+
+---
+
+## 9. Como Executar
+
+### 1. Criar Banco
+
+```sql
+CREATE DATABASE projeto_saude;
+```
+Ajuste seu persistence.xml com usuário e senha.
+
+2. Rodar Maven
+```
+mvn clean install
+```
+
+4. Executar a aplicação
+Classe principal:
+```
+app.Main
+```
+
+## 10. Testes com Carga Alta
+O projeto foi testado com 100.000+ registros usando java-faker.
+
+Isso validou:
+- desempenho da JPA
+- consultas paginadas
+- funcionamento da árvore de decisão
+- consumo das EDs personalizadas
+
+## 11. Considerações Finais
+Este projeto demonstra:
+
+- Padrões avançados de POO
+- Estruturas de dados próprias
+- Árvore de decisão orientada a objetos
+- Persistência real com JPA/Hibernate
+- Arquitetura limpa, modular e extensível
 
 <img width="5821" height="1426" alt="Diagrama de Classes com Herança e Árvore de Decisão POO" src="https://github.com/user-attachments/assets/75fefa3b-450b-4e56-bc06-6a40353c7767" />
