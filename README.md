@@ -1,200 +1,225 @@
-# 📌 Sistema de Análise de Dados de Saúde Pessoal  
-**Java • POO • JPA (Hibernate) • MySQL • EDs Próprias (Fila + Lista Encadeada) • Árvore de Decisão POO**
+# 📌 Sistema de Análise de Dados de Saúde Pessoal
+
+**Java • POO • JPA (Hibernate) • MariaDB • Arquitetura em Camadas • Árvore de Decisão POO**
 
 ---
 
 ## 1. Visão Geral
 
-O **Sistema de Análise de Dados de Saúde Pessoal** permite que usuários:
+O **Sistema de Análise de Dados de Saúde Pessoal** é uma aplicação Java em modo console que permite o acompanhamento de métricas diárias de saúde, definição de metas personalizadas e geração automática de alertas com base em regras de negócio modeladas por meio de uma **Árvore de Decisão orientada a objetos**.
 
-- registrem métricas diárias de saúde (passos, batimentos, sono e calorias),
-- acompanhem metas personalizadas,
-- recebam alertas automáticos baseados em uma **Árvore de Decisão orientada a objetos**.
+O sistema foi desenvolvido com foco em boas práticas de **Programação Orientada a Objetos** e **arquitetura em camadas**, evitando lógica acoplada e estruturas condicionais extensas, como `if/else` em cascata.
 
-O sistema demonstra conceitos avançados de POO:
+### Funcionalidades principais
 
-- Herança  
-- Polimorfismo  
-- Encapsulamento  
-- Composição  
-- Padrão **Composite**  
-- Estruturas de dados próprias implementadas manualmente
-
-**Stack utilizada:**  
-`Java` • `JPA (Hibernate)` • `MySQL 8` • `Maven` • `phpMyAdmin`
+- Cadastro e autenticação de usuários  
+- Registro diário de dados de saúde  
+- Controle de metas individuais (passos e sono)  
+- Geração automática de alertas  
+- Avaliação de metas baseada em registros reais  
+- Persistência dos dados com JPA/Hibernate e MariaDB  
 
 ---
 
-## 2. Estrutura do Projeto
+## 2. Tecnologias Utilizadas
 
+- Java 8+  
+- JPA (Hibernate)  
+- MariaDB  
+- Maven  
+- Arquitetura MVC + Service + DAO  
+- Programação Orientada a Objetos  
+- Árvore de Decisão POO (Composite Pattern)  
+
+---
+
+## 3. Diagrama de Classes
+
+![Diagrama UML](docs/diagramas/diagrama-uml.png)
+
+## 4. Estrutura do Projeto
+
+A organização do projeto segue o padrão em camadas, promovendo separação de responsabilidades e maior facilidade de manutenção.
+
+```text
 src/main/java/
-├── app/ → Classe Main (execução e testes)
-├── domain/ → Entidades e Regras do Domínio
-│ ├── arvore/ → Árvore de Decisão (Composite)
-│ ├── meta/ → Metas de Saúde (Herança)
-│ └── ... → Usuário, RegistroSaude, Alerta, etc.
-├── dao/ → Persistência JPA (DAOs)
-├── service/ → Regras de Negócio
-└── util/estruturadados/ → Estruturas de Dados próprias
+├── view/
+│   └── MainConsole.java
+│
+├── control/
+│   ├── UsuarioControl.java
+│   ├── RegistroSaudeControl.java
+│   ├── MetaSaudeControl.java
+│   └── AlertaControl.java
+│
+├── service/
+│   ├── UsuarioService.java
+│   ├── RegistroSaudeService.java
+│   ├── MetaSaudeService.java
+│   └── AlertaService.java
+│
+├── dao/
+│   ├── GenericDAO.java
+│   ├── UsuarioDAO.java
+│   ├── RegistroSaudeDAO.java
+│   ├── MetaSaudeDAO.java
+│   └── AlertaDAO.java
+│
+├── domain/
+│   ├── Usuario.java
+│   ├── RegistroSaude.java
+│   ├── MetaSaude.java
+│   ├── MetaPassos.java
+│   ├── MetaMediaSono.java
+│   ├── Alerta.java
+│   ├── Severidade.java
+│   └── arvore/
+│       ├── INoDecisao.java
+│       ├── NoDeDecisao.java
+│       ├── NoResultado.java
+│       └── NoResultadoVazio.jav
 
-## 3. Objetivos do Projeto
-
-- Aplicar POO de forma clara, correta e idiomática (encapsulamento, coesão, polimorfismo).
-- Implementar regras reais usando **Árvore de Decisão POO**, eliminando `if/else`.
-- Modelar entidades e persistência com **JPA/Hibernate**.
-- Criar e usar **estruturas de dados próprias** (Fila e Lista Encadeada).
-- Fornecer arquitetura limpa, organizada e modular.
-- Atender todos os requisitos da disciplina.
+```
 
 ---
 
-## 4. Requisitos
+## 5. Arquitetura do Sistema
 
-### 4.1 Requisitos Funcionais
+O sistema segue uma **arquitetura em camadas**, garantindo separação de responsabilidades:
 
-- Cadastrar usuários.
-- Registrar métricas diárias:
+| Camada   | Responsabilidade |
+|--------|------------------|
+| view   | Interface com o usuário (console) |
+| control | Orquestra chamadas entre view e service |
+| service | Contém regras de negócio e validações |
+| dao     | Persistência de dados via JPA |
+| domain  | Modelo do domínio e regras OO |
+
+Essa abordagem torna o sistema **modular, coeso e de fácil manutenção**.
+
+---
+
+## 6. Requisitos Funcionais
+
+- Cadastrar usuários com validação de CPF e e-mail  
+- Autenticar usuários (login)  
+- Registrar métricas diárias de saúde:
   - Passos  
   - BPM médio  
   - Horas de sono  
-  - Calorias
-- Evitar registros duplicados no mesmo dia.
-- Definir e atualizar metas:
+  - Calorias  
+- Impedir registros duplicados na mesma data  
+- Criar metas de saúde:
   - Meta de passos  
   - Meta de média de sono  
-- Atualização polimórfica das metas.
-- Gerar alertas automáticos pela árvore de decisão.
-- Armazenar alertas em uma **Fila**.
-- Consultar histórico e médias com **Lista Encadeada**.
-- Listar estatísticas por período.
-
-### 4.2 Requisitos Não Funcionais
-
-- Uso de JPA.
-- Java 8+.
-- Organização por camadas e pacotes.
-- Banco MySQL 8.
-- README completo.
-- Commits frequentes e organizados.
+- Permitir apenas uma meta por tipo para cada usuário  
+- Atualizar e remover metas  
+- Avaliar metas com base nos registros  
+- Gerar alertas automáticos  
+- Listar registros e alertas por período  
 
 ---
 
-## 5. Domínio do Sistema
+## 7. Modelo de Domínio
 
 ### Entidades JPA
 
-- **Usuario**  
-  `id, nome, email, cpf, senha, bpmMaxAlerta, ...`
+#### Usuario
+- id  
+- nome  
+- email  
+- cpf  
+- senha  
+- bpmMinAlerta  
+- bpmMaxAlerta  
 
-- **RegistroSaude**  
-  `id, data, passos, bpmMedio, horasSono, kcal, usuario`
+#### RegistroSaude
+- id  
+- data  
+- passos  
+- bpmMedio  
+- horasSono  
+- kcal  
+- usuario  
 
-- **MetaSaude (abstrata)**
-  - **MetaPassos**
-  - **MetaMediaSono**  
-  — com `@Inheritance(SINGLE_TABLE)`
+#### MetaSaude (classe abstrata)
+- MetaPassos  
+- MetaMediaSono  
 
-- **Alerta**  
-  `id, mensagem, severidade, dataHora, usuario, registroRelacionado`
+Utiliza **Herança com JPA** para permitir comportamentos polimórficos na avaliação de metas.
+
+#### Alerta
+- id  
+- mensagem  
+- severidade  
+- dataHora  
+- usuario  
+- registroRelacionado  
 
 ---
 
-## 6. Padrões de Projeto Aplicados (Essencial para Avaliação)
+## 8. Padrões de Projeto Aplicados
 
-### 1. Herança e Polimorfismo — *MetaSaude*
-
-Implementação:
+### 8.1 Herança e Polimorfismo — Metas de Saúde
 
 MetaSaude (abstract)
 ├── MetaPassos
 └── MetaMediaSono
 
-Cada meta sobrescreve:
-verificarProgresso(List<RegistroSaude>)
+As metas compartilham comportamentos comuns, mas implementam regras específicas de avaliação de progresso, demonstrando **polimorfismo real**.
 
 ---
 
-### 2. Padrão Composite — Árvore de Decisão POO
+### 8.2 Composite Pattern — Árvore de Decisão
 
-Estrutura:
+A geração de alertas utiliza uma **Árvore de Decisão orientada a objetos**, evitando estruturas condicionais rígidas.
 
-| Classe            | Papel                                 |
-|------------------|-----------------------------------------|
-| `INoDecisao`      | Interface raiz com `avaliar()`          |
-| `NoDeDecisao`     | Nó interno com condição + filhos        |
-| `NoResultado`     | Folha que cria um alerta                |
-| `NoResultadoVazio`| Folha neutra (sem alerta)               |
+| Classe            | Função |
+|------------------|--------|
+| INoDecisao        | Interface comum para todos os nós |
+| NoDeDecisao       | Nó intermediário com condição |
+| NoResultado       | Nó folha que gera alerta |
+| NoResultadoVazio  | Nó folha sem alerta |
 
-Exemplo de árvore:
+Essa estrutura torna o sistema:
 
-Se BPM > limite → alerta crítico
-Senão se sono < 5h → alerta de sono
-Senão → nenhum alerta
-
----
-
-## 7. Estruturas de Dados Próprias
-
-A atividade exige EDs implementadas manualmente.
-
-### ✔ Fila<T> (genérica)
-Usada para armazenar alertas novos.
-
-### ✔ ListaEncadeada
-Usada para armazenar e processar registros de saúde (ex.: média de passos).
+- Extensível  
+- Testável  
+- Livre de `if/else` extensos  
 
 ---
 
-## 8. Diagrama de Classes
+## 9. Banco de Dados
 
-> ⚠ Inclua aqui a imagem do seu modelo UML.
+- **Banco:** MariaDB  
+- **Persistência:** JPA / Hibernate  
+- **Gerenciamento:** via `persistence.xml`  
+- **Criação automática de tabelas:** Hibernate  
 
-O diagrama deve exibir:
-
-- Entidades JPA  
-- Herança de MetaSaude  
-- Composite da árvore  
-- Relação entre serviços/DAOs  
-- ListaEncadeada + Fila  
-
----
-
-## 9. Como Executar
-
-### 1. Criar Banco
+### Exemplo de criação do banco
 
 ```sql
 CREATE DATABASE projeto_saude;
 ```
-Ajuste seu persistence.xml com usuário e senha.
+Configure usuário, senha e URL no persistence.xml.
 
-2. Rodar Maven
-```
+## 10. Execução do Projeto
+
+1. Clone o repositório
+2. Configure o banco MariaDB
+3. Execute o build:
 mvn clean install
-```
-
-4. Executar a aplicação
+4. Execute a aplicação:
 Classe principal:
-```
-app.Main
-```
-
-## 10. Testes com Carga Alta
-O projeto foi testado com 100.000+ registros usando java-faker.
-
-Isso validou:
-- desempenho da JPA
-- consultas paginadas
-- funcionamento da árvore de decisão
-- consumo das EDs personalizadas
+view.MainConsole
 
 ## 11. Considerações Finais
+
 Este projeto demonstra:
+- Aplicação correta de POO
+- Arquitetura em camadas bem definida
+- Uso de JPA com banco relacional real
+- Implementação de Árvore de Decisão orientada a objetos
+- Código limpo, coeso e fácil de evoluir
 
-- Padrões avançados de POO
-- Estruturas de dados próprias
-- Árvore de decisão orientada a objetos
-- Persistência real com JPA/Hibernate
-- Arquitetura limpa, modular e extensível
-
-<img width="5821" height="1426" alt="Diagrama de Classes com Herança e Árvore de Decisão POO" src="https://github.com/user-attachments/assets/75fefa3b-450b-4e56-bc06-6a40353c7767" />
+O sistema atende plenamente aos objetivos da disciplina e fornece uma base sólida para extensões futuras, como interface gráfica ou serviços web.
