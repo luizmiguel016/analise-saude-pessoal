@@ -18,6 +18,7 @@ public class Alerta {
     @Enumerated(EnumType.STRING)
     private Severidade severidade;
 
+    @Column(nullable = false)
     private LocalDateTime dataHora;
 
     @ManyToOne
@@ -45,6 +46,13 @@ public class Alerta {
         this.usuario = usuario;
         this.registroRelacionado = registroRelacionado;
         this.dataHora = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.dataHora == null) {
+            this.dataHora = LocalDateTime.now();
+        }
     }
 
     public Long getId() {
@@ -89,5 +97,26 @@ public class Alerta {
 
     public void setRegistroRelacionado(RegistroSaude registroRelacionado) {
         this.registroRelacionado = registroRelacionado;
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId() +
+                " | Data: " + getDataHora() +
+                " | Severidade: " + getSeveridade() +
+                " | Mensagem: " + getMensagem();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Alerta)) return false;
+        Alerta other = (Alerta) o;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
     }
 }

@@ -46,4 +46,32 @@ public class MetaMediaSono extends MetaSaude {
     public void setHorasAlvo(Double horasAlvo) {
         this.horasAlvo = horasAlvo;
     }
+
+    @Override
+    public void atualizarMeta(Number novoValor) {
+        double horas = novoValor.doubleValue();
+        if (horas < 0) {
+            throw new IllegalArgumentException("Horas de sono não pode ser negativo");
+        }
+        this.setHorasAlvo(horas);
+    }
+
+    @Override
+    public void exibirResultado(RegistroSaude registro) {
+        double sonoFeito = registro.getHorasSono();
+        double alvo = getHorasAlvo();
+        double restante = alvo - sonoFeito;
+
+        System.out.println("Meta de Sono (ID: " + getId() + "):");
+        System.out.println(" - Sono estipulado: " + alvo);
+        System.out.println(" - Sono realizado: " + sonoFeito);
+        System.out.println(" - Restantes: " + (restante > 0 ? restante : 0));
+        System.out.println(" - Atingida? " + (isAtingida() ? "SIM" : "NÃO"));
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId()
+                + " | Horas estipulada: " + horasAlvo;
+    }
 }

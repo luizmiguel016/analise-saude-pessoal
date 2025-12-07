@@ -6,54 +6,74 @@ import domain.Usuario;
 import java.util.List;
 
 public class UsuarioService {
-    private final UsuarioDAO usuarioDAO;
 
-    public UsuarioService() {
-        this.usuarioDAO = new UsuarioDAO();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+    public Usuario cadastrar(Usuario usuario) {
+
+        if (usuarioDAO.buscarUsuarioPorCpf(usuario.getCpf()) != null) {
+            throw new IllegalArgumentException("CPF já cadastrado.");
+        }
+
+        if (usuarioDAO.buscarUsuarioPorEmail(usuario.getEmail()) != null) {
+            throw new IllegalArgumentException("E-mail já cadastrado");
+        }
+
+        try {
+            return usuarioDAO.salvar(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException("Não foi possível cadastrar o usuário.");
+        }
     }
 
-    public Usuario buscarPorId(Long id) {
-        return usuarioDAO.buscarPorId(id);
+    public Usuario buscarUsuarioPorId(Long id) {
+        validarId(id);
+
+        try {
+            return usuarioDAO.buscarPorId(id);
+        } catch (RuntimeException e) { // NotFoundException
+            throw new RuntimeException("Não foi possível encontrar o usuário.", e);
+        }
     }
 
     public List<Usuario> listarTodos() {
-        return usuarioDAO.listarTodos();
+        return usuarioDAO.buscarTodos();
     }
 
-    public List<Usuario> buscarPorNome(String nome) {
-        return usuarioDAO.buscarPorNome(nome);
-    }
+    public void removerUsuario(Long id) {
+        validarId(id);
 
-    public void excluirUsuario(Long id) {
-        usuarioDAO.removerPorId(id);
-    }
-
-    public void cadastrarUsuario(Usuario usuario) {
-        if (usuarioDAO.buscarPorCpf(usuario.getCpf()) != null) {
-            throw new IllegalArgumentException("Erro: CPF já cadastrado: " + usuario.getCpf());
+        try {
+            usuarioDAO.removerPorId(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Não foi possível remover o usuário.", e);
         }
-        if (usuarioDAO.buscarPorEmail(usuario.getEmail()) != null) {
-            throw new IllegalArgumentException("Erro: E-mail já cadastrado: " + usuario.getEmail());
-        }
-        usuarioDAO.salvar(usuario);
+
     }
 
-    public void alterarSenha(Long idUsuario, String novaSenha) {
-        Usuario usuario = usuarioDAO.buscarPorId(idUsuario);
-        if (usuario == null) throw new IllegalArgumentException("Usuário não encontrado.");
+    public void alterarSenha(Long id, String novaSenha) {
+        validarId(id);
 
-        if (usuario.getSenha().equals(novaSenha)) {
-            throw new IllegalArgumentException("A nova senha não pode ser igual à anterior.");
+        try {
+            Usuario usuario = usuarioDAO.buscarPorId(id);
+            usuario.setSenha(novaSenha);
+            usuarioDAO.editar(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException("Não foi possível alterar a senha.", e);
         }
-        usuario.setSenha(novaSenha);
-        usuarioDAO.atualizar(usuario);
     }
 
     public Usuario autenticar(String email, String senha) {
-        Usuario usuario = usuarioDAO.buscarPorEmail(email);
-        if (usuario != null && usuario.getSenha().equals(senha)) {
-            return usuario;
+        Usuario usuario = usuarioDAO.buscarUsuarioPorEmail(email);
+        if (usuario == null || !usuario.getSenha().equals(senha)) {
+            throw new IllegalArgumentException("Usuário ou senha inválidos.");
         }
-        throw new IllegalArgumentException("Credenciais inválidas.");
+        return usuario;
+    }
+
+    private void validarId(Long id) {
+        if (id == null || id < 0) {
+            throw new IllegalArgumentException("ID deve ser válido.");
+        }
     }
 }

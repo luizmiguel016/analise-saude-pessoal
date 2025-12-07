@@ -16,12 +16,14 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
-    private String senha; // Adicionado para o login
+    private String senha;
 
-    @Column(length = 11, nullable = false, unique = true)
+    @Column(length = 14, nullable = false, unique = true)
     private String cpf;
 
+    @Column(nullable = false)
     private Integer bpmMinAlerta;
+    @Column(nullable = false)
     private Integer bpmMaxAlerta;
 
     public Usuario() {}
@@ -35,18 +37,68 @@ public class Usuario {
         this.bpmMaxAlerta = bpmMax;
     }
 
-    // Getters e Setters (Gere via IDE: Alt+Insert ou botão direito -> Generate)
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
-    public Integer getBpmMinAlerta() { return bpmMinAlerta; }
-    public void setBpmMinAlerta(Integer i) { this.bpmMinAlerta = i; }
-    public Integer getBpmMaxAlerta() { return bpmMaxAlerta; }
-    public void setBpmMaxAlerta(Integer i) { this.bpmMaxAlerta = i; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public Integer getBpmMinAlerta() {
+        return bpmMinAlerta;
+    }
+
+    public void setBpmMinAlerta(Integer i) {
+        this.bpmMinAlerta = i;
+    }
+
+    public Integer getBpmMaxAlerta() {
+        return bpmMaxAlerta;
+    }
+
+    public void setBpmMaxAlerta(Integer i) {
+        this.bpmMaxAlerta = i;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Usuario)) return false;
+        Usuario other = (Usuario) o;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
 }

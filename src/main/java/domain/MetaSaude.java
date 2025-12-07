@@ -22,11 +22,27 @@ public abstract class MetaSaude {
     public MetaSaude() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     public MetaSaude(Usuario usuario) {
         this.usuario = usuario;
     }
 
     public abstract void verificarProgresso(List<RegistroSaude> registros);
+
+    public abstract void exibirResultado(RegistroSaude registro);
+
+    public abstract void atualizarMeta(Number novoValor);
 
     public boolean isAtingida() {
         return atingida;

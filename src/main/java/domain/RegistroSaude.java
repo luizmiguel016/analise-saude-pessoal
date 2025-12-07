@@ -2,6 +2,7 @@ package domain;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "registros_saude", uniqueConstraints = @UniqueConstraint(columnNames = {"data", "usuario_id"}))
@@ -9,7 +10,7 @@ public class RegistroSaude {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private LocalDate data;
@@ -42,8 +43,12 @@ public class RegistroSaude {
         this.usuario = usuario;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDate getData() {
@@ -92,5 +97,29 @@ public class RegistroSaude {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter br = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return "ID: " + id
+                + " | Data: " + data.format(br)
+                + " | Passos: " + passos
+                + " | BPM: " + bpmMedio
+                + " | Sono: " + horasSono
+                + " | Kcal: " + kcal;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegistroSaude)) return false;
+        RegistroSaude other = (RegistroSaude) o;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
     }
 }

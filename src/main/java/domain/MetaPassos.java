@@ -37,4 +37,34 @@ public class MetaPassos extends MetaSaude{
     public void setAlvoPassos(Integer alvoPassos) {
         this.alvoPassos = alvoPassos;
     }
+
+    @Override
+    public void atualizarMeta(Number novoValor) {
+        int passos = novoValor.intValue();
+        if (passos < 0) {
+            throw new IllegalArgumentException("Passos não pode ser negativo.");
+        }
+        this.setAlvoPassos(passos);
+    }
+
+    @Override
+    public void exibirResultado(RegistroSaude registro) {
+        int passosFeitos = registro.getPassos();
+        int alvo = getAlvoPassos();
+        int restante = alvo - passosFeitos;
+
+        System.out.println("Meta de Passos (ID: " + getId() + "):");
+        System.out.println(" - Passos estipulado: " + alvo);
+        System.out.println(" - Passos feitos: " + passosFeitos);
+        System.out.println(" - Restantes: " + (restante > 0 ? restante : 0));
+        System.out.println(" - Atingida? " + (isAtingida() ? "SIM" : "NÃO"));
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId()
+                + " | Passos estipulado: " + alvoPassos;
+    }
+
+
 }
